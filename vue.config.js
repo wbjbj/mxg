@@ -27,7 +27,7 @@ module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: process.env.NODE_ENV === 'development',
+  lintOnSave: false, //process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
     port: port,
@@ -36,7 +36,20 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    before: require('./mock/mock-server.js'),
+    // 开发环境代理配置
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: { // 是.env.development 文件的'/dev-api':
+        // 目标服务器地址
+        target: 'http://mengxuegu.com:7300/mock/5fb10dc3a528522f7959dae6/blog-admin',
+        changeOrigin: true, // 开启代理服务器，
+        pathRewrite: {
+          // '^/dev-api': '',
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    }
+
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
